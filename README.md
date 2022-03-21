@@ -2,4 +2,6 @@
 
 Simple extension for Chromium-based browsers to remove title of YouTube videos from tab.
 
-Supports notification counter in title. 
+Supports YouTube notification counter in title. 
+
+Can to toggled on and off by clicking the extension icon.
