@@ -1,0 +1,26 @@
+{
+  "name": "Rename YouTube tab",
+  "action": {},
+  "manifest_version": 3,
+  "version": "1.0.0.0",
+  "description": "Renames a YouTube page's title to 'YouTube' when you click the icon",
+  "icons": {
+    "16": "icons/peaches16x16.png",
+    "32": "icons/peaches32x32.png",
+    "48": "icons/peaches48x48.png",
+    "128": "icons/peaches128x128.png"
+  },
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "tabs"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "host_permissions": [
+    "https://www.youtube.com/*",
+    "https://youtube.com/*",
+    "https://youtu.be/*"
+  ]
+}
