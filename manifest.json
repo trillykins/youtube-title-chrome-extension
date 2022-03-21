@@ -12,8 +12,7 @@
   },
   "permissions": [
     "scripting",
-    "tabs",
-    "action"
+    "tabs"
   ],
   "background": {
     "service_worker": "background.js"

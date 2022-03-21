@@ -12,7 +12,7 @@ function renameYouTubePage(tabId) {
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (!enabled) return;
-  if (['https://www.youtube.com', 'https://youtube.com', 'https://www.youtu.be', 'https://youtu.be'].some(y => tab.url.toLowerCase().startsWith(y))) {
+  if (['https://www.youtube.com', 'https://youtube.com', 'https://www.youtu.be', 'https://youtu.be'].some(y => tab.url.startsWith(y))) {
     chrome.scripting.executeScript({
       target: { tabId: tab.id },
       function: renameYouTubePage,
