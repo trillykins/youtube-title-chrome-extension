@@ -12,14 +12,12 @@ function renameYouTubePage(tabId) {
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (!enabled) return;
-  if (['chrome://', 'edge://'].some(x => !tab.url.includes(x))) {
-    if (['https://www.youtube.com', 'https://youtube.com', 'https://www.youtu.be', 'https://youtu.be'].some(y => tab.url.toLowerCase().startsWith(y))) {
-      chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        function: renameYouTubePage,
-        args: [tabId]
-      });
-    }
+  if (['https://www.youtube.com', 'https://youtube.com', 'https://www.youtu.be', 'https://youtu.be'].some(y => tab.url.toLowerCase().startsWith(y))) {
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      function: renameYouTubePage,
+      args: [tabId]
+    });
   }
 });
 
