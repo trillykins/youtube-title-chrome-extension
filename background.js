@@ -25,9 +25,9 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 chrome.action.onClicked.addListener((tab) => {
   enabled = !enabled;
-  if (!enabled) {
-    chrome.action.setBadgeText({ text: 'off' });
-  } else {
+  if (enabled) {
     chrome.action.setBadgeText({ text: '' });
+  } else {
+    chrome.action.setBadgeText({ text: 'off' });
   }
 });
