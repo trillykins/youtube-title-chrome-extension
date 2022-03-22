@@ -19,7 +19,7 @@ chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
   chrome.storage.local.get(`${tabId}`, function (data) {
     if (Object.keys(data).length === 0 && data.constructor === Object) return;
     console.log("Removing tab id: " + tabId);
-    chrome.stoage.local.remove(removedTabId);
+    chrome.storage.local.remove(`${tabId}`);
   });
 });
 
@@ -43,7 +43,7 @@ chrome.tabs.onReplaced.addListener((addedTabId, removedTabId) => {
   chrome.storage.local.get(`${tab.id}`, function (data) {
     if (Object.keys(data).length === 0 && data.constructor === Object) return;
     console.log("Tab ID is getting replaced: " + removedTabId + " => " + addedTabId);
-    chrome.stoage.local.remove(removedTabId);
+    chrome.storage.local.remove(`${removedTabId}`);
     chrome.storage.local.set({ [addedTabId]: tab.title });
   });
 });
