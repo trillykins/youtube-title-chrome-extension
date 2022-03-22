@@ -16,7 +16,7 @@ function renameYouTubePage(tabId, tabTitle) {
 }
 
 chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
-  chrome.storage.local.get(`${tab.id}`, function (data) {
+  chrome.storage.local.get(`${tabId}`, function (data) {
     if (Object.keys(data).length === 0 && data.constructor === Object) return;
     console.log("Removing tab id: " + tabId);
     chrome.stoage.local.remove(removedTabId);
