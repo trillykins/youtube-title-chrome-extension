@@ -15,6 +15,20 @@ function renameYouTubePage(tabId, tabTitle) {
   }
 }
 
+chrome.runtime.onInstalled.addListener(() => {
+  console.log("onInstalled called!");
+  chrome.storage.sync.set({ enabled: true });
+});
+
+chrome.runtime.onStartup.addListener(() => {
+  console.log("onStartUp called!");
+  chrome.storage.sync.get('enabled', function (data) {
+    console.log(data.enabled);
+    enabled = data.enabled;
+    if (!enabled) chrome.action.setBadgeText({ text: 'off' });
+  });
+});
+
 chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
   chrome.storage.local.get(`${tabId}`, function (data) {
     if (Object.keys(data).length === 0 && data.constructor === Object) return;
@@ -24,13 +38,13 @@ chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
 });
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (!enabled) return;
   if (urls.some(y => tab.url.startsWith(y))) {
     const hiddenTitleSearchPattern = new RegExp(/^(\([0-9]+\)\s)?(YouTube)\s[0-9]+/g);
     if (!hiddenTitleSearchPattern.test(tab.title)) {
       console.log("Saving: " + [tab.id] + ", " + [tab.title]);
       chrome.storage.local.set({ [tab.id]: tab.title });
     }
+    if (!enabled) return;
     chrome.scripting.executeScript({
       target: { tabId: tab.id },
       function: renameYouTubePage,
@@ -52,8 +66,12 @@ chrome.action.onClicked.addListener(() => {
   enabled = !enabled;
   if (enabled) {
     chrome.action.setBadgeText({ text: '' });
+    chrome.storage.sync.set({ enabled: true });
+    console.log("enabled!");
   } else {
     chrome.action.setBadgeText({ text: 'off' });
+    chrome.storage.sync.set({ enabled: false });
+    console.log("Disabled!");
   }
 
   chrome.tabs.query({}, function (tabs) {
