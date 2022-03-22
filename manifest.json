@@ -2,7 +2,7 @@
   "name": "Hide YouTube title",
   "action": {},
   "manifest_version": 3,
-  "version": "1.0.1.0",
+  "version": "1.0.1.1",
   "description": "Renames a YouTube page's title to 'YouTube' when you click the icon",
   "icons": {
     "16": "icons/peaches16x16.png",
