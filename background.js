@@ -1,5 +1,4 @@
 const urls = ['https://www.youtube.com', 'https://youtube.com', 'https://www.youtu.be', 'https://youtu.be'];
-var enabled = true;
 
 function renameYouTubePage(tabId, tabTitle) {
   if (tabTitle != null) {
@@ -24,8 +23,7 @@ chrome.runtime.onStartup.addListener(() => {
   console.log("onStartUp called!");
   chrome.storage.sync.get('enabled', function (data) {
     console.log(data.enabled);
-    enabled = data.enabled;
-    if (!enabled) chrome.action.setBadgeText({ text: 'off' });
+    if (!data.enabled) chrome.action.setBadgeText({ text: 'off' });
   });
 });
 
@@ -44,11 +42,13 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       console.log("Saving: " + [tab.id] + ", " + [tab.title]);
       chrome.storage.local.set({ [tab.id]: tab.title });
     }
-    if (!enabled) return;
-    chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      function: renameYouTubePage,
-      args: [tabId, null]
+    chrome.storage.sync.get('enabled', function (data) {
+      if (!data.enabled) return;
+      chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        function: renameYouTubePage,
+        args: [tabId, null]
+      });
     });
   }
 });
@@ -63,41 +63,41 @@ chrome.tabs.onReplaced.addListener((addedTabId, removedTabId) => {
 });
 
 chrome.action.onClicked.addListener(() => {
-  enabled = !enabled;
-  if (enabled) {
-    chrome.action.setBadgeText({ text: '' });
-    chrome.storage.sync.set({ enabled: true });
-    console.log("enabled!");
-  } else {
-    chrome.action.setBadgeText({ text: 'off' });
-    chrome.storage.sync.set({ enabled: false });
-    console.log("Disabled!");
-  }
+  chrome.storage.sync.get('enabled', function (data) {
+    const enabled = !data.enabled;
+    if (enabled) {
+      chrome.action.setBadgeText({ text: '' });
+      chrome.storage.sync.set({ enabled: true });
+    } else {
+      chrome.action.setBadgeText({ text: 'off' });
+      chrome.storage.sync.set({ enabled: false });
+    }
 
-  chrome.tabs.query({}, function (tabs) {
-    tabs.forEach(function (tab) {
-      if (urls.some(u => tab.url.startsWith(u))) {
-        if (enabled) {
-          console.log(tab.id + " is going into hiding!");
-          chrome.scripting.executeScript({
-            target: { tabId: tab.id },
-            function: renameYouTubePage,
-            args: [tab.id, null]
-          });
-        } else {
-          chrome.storage.local.get(`${tab.id}`, function (data) {
-            if (data[tab.id] === undefined) console.log("data is undefined");
-            else {
-              console.log(tab.id + " => " + data[tab.id]);
-              chrome.scripting.executeScript({
-                target: { tabId: tab.id },
-                function: renameYouTubePage,
-                args: [tab.id, data[tab.id]]
-              });
-            }
-          });
+    chrome.tabs.query({}, function (tabs) {
+      tabs.forEach(function (tab) {
+        if (urls.some(u => tab.url.startsWith(u))) {
+          if (enabled) {
+            console.log(tab.id + " is going into hiding!");
+            chrome.scripting.executeScript({
+              target: { tabId: tab.id },
+              function: renameYouTubePage,
+              args: [tab.id, null]
+            });
+          } else {
+            chrome.storage.local.get(`${tab.id}`, function (data) {
+              if (data[tab.id] === undefined) console.log("data is undefined");
+              else {
+                console.log(tab.id + " => " + data[tab.id]);
+                chrome.scripting.executeScript({
+                  target: { tabId: tab.id },
+                  function: renameYouTubePage,
+                  args: [tab.id, data[tab.id]]
+                });
+              }
+            });
+          }
         }
-      }
+      });
     });
   });
 });
